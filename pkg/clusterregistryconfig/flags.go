@@ -5,7 +5,6 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/alessio/shellescape"
 	cmv1 "github.com/openshift-online/ocm-sdk-go/clustersmgmt/v1"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
@@ -273,37 +272,37 @@ func BuildRegistryConfigOptions(spec ocm.Spec) string {
 	if len(spec.AllowedRegistries) > 0 {
 		command += fmt.Sprintf(" --%s %s",
 			allowedRegistriesFlag,
-			shellescape.Quote(strings.Join(spec.AllowedRegistries, ",")))
+			helper.ShellQuote(strings.Join(spec.AllowedRegistries, ",")))
 	}
 
 	if len(spec.BlockedRegistries) > 0 {
 		command += fmt.Sprintf(" --%s %s",
 			blockedRegistriesFlag,
-			shellescape.Quote(strings.Join(spec.BlockedRegistries, ",")))
+			helper.ShellQuote(strings.Join(spec.BlockedRegistries, ",")))
 	}
 
 	if len(spec.InsecureRegistries) > 0 {
 		command += fmt.Sprintf(" --%s %s",
 			insecureRegistriesFlag,
-			shellescape.Quote(strings.Join(spec.InsecureRegistries, ",")))
+			helper.ShellQuote(strings.Join(spec.InsecureRegistries, ",")))
 	}
 
 	if spec.AdditionalTrustedCaFile != "" {
 		command += fmt.Sprintf(" --%s %s",
 			additionalTrustedCaPathFlag,
-			shellescape.Quote(spec.AdditionalTrustedCaFile))
+			helper.ShellQuote(spec.AdditionalTrustedCaFile))
 	}
 
 	if spec.PlatformAllowlist != "" {
 		command += fmt.Sprintf(" --%s %s",
 			platformAllowlistFlag,
-			shellescape.Quote(spec.PlatformAllowlist))
+			helper.ShellQuote(spec.PlatformAllowlist))
 	}
 
 	if spec.AllowedRegistriesForImport != "" {
 		command += fmt.Sprintf(" --%s %s",
 			allowedRegistriesForImportFlag,
-			shellescape.Quote(spec.AllowedRegistriesForImport))
+			helper.ShellQuote(spec.AllowedRegistriesForImport))
 	}
 
 	return command

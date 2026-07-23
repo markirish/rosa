@@ -32,8 +32,7 @@ import (
 	cmv1 "github.com/openshift-online/ocm-sdk-go/clustersmgmt/v1"
 	msv1 "github.com/openshift-online/ocm-sdk-go/servicemgmt/v1"
 
-	"gitlab.com/c0b/go-ordered-json"
-
+	"github.com/openshift/rosa/internal/ordered"
 	"github.com/openshift/rosa/pkg/aws"
 )
 

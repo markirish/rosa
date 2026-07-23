@@ -29,7 +29,7 @@ var _ = Describe("CloudFormation", func() {
 		mockCfAPI = mocks.NewMockCloudFormationApiClient(mockCtrl)
 		client = New(
 			awsSdk.Config{},
-			NewLoggerWrapper(logrus.New(), nil),
+			NewLoggerWrapper(logrus.New()),
 			mocks.NewMockIamApiClient(mockCtrl),
 			mocks.NewMockEc2ApiClient(mockCtrl),
 			mocks.NewMockOrganizationsApiClient(mockCtrl),

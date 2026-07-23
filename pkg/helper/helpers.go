@@ -6,12 +6,12 @@ import (
 	"math/rand"
 	"os"
 	"reflect"
+	"regexp"
 	"sort"
 	"strings"
 	"time"
 
 	"github.com/briandowns/spinner"
-	"github.com/google/uuid"
 	cmv1 "github.com/openshift-online/ocm-sdk-go/clustersmgmt/v1"
 
 	"github.com/openshift/rosa/pkg/reporter"
@@ -183,11 +183,6 @@ func SaveDocument(doc, filename string) error {
 	return nil
 }
 
-func IsValidUUID(u string) bool {
-	_, err := uuid.Parse(u)
-	return err == nil
-}
-
 func HandleEscapedEmptyString(input string) string {
 	if input == "\"\"" {
 		input = ""
@@ -267,4 +262,17 @@ func FilterEmptyStrings(strings []string) []string {
 		}
 	}
 	return filteredResult
+}
+
+var shellUnsafe = regexp.MustCompile(`[^\w@%+=:,./-]`)
+
+// ShellQuote returns s escaped as a single POSIX shell argument.
+func ShellQuote(s string) string {
+	if len(s) == 0 {
+		return "''"
+	}
+	if shellUnsafe.MatchString(s) {
+		return "'" + strings.ReplaceAll(s, "'", "'\"'\"'") + "'"
+	}
+	return s
 }

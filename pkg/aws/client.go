@@ -47,7 +47,6 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/sts"
 	"github.com/aws/smithy-go/middleware"
 	smithyhttp "github.com/aws/smithy-go/transport/http"
-	"github.com/go-logr/logr"
 	awserr "github.com/openshift-online/ocm-common/pkg/aws/errors"
 	cmv1 "github.com/openshift-online/ocm-sdk-go/clustersmgmt/v1"
 	"github.com/sirupsen/logrus"
@@ -243,7 +242,6 @@ type AccessKeyGetter interface {
 // ClientBuilder contains the information and logic needed to build a new AWS client.
 type ClientBuilder struct {
 	logger              *logrus.Logger
-	capaLogger          *logr.Logger
 	region              *string
 	credentials         *AccessKey
 	useLocalCredentials bool
@@ -344,11 +342,6 @@ func (c *awsClient) CheckIfMachinePoolHasDedicatedHost(instanceIDs []string) (bo
 // Logger sets the logger that the AWS client will use to send messages to the log.
 func (b *ClientBuilder) Logger(value *logrus.Logger) *ClientBuilder {
 	b.logger = value
-	return b
-}
-
-func (b *ClientBuilder) CapaLogger(value *logr.Logger) *ClientBuilder {
-	b.capaLogger = value
 	return b
 }
 
@@ -460,7 +453,7 @@ func (b *ClientBuilder) BuildSession() (aws.Config, error) {
 // Build uses the information stored in the builder to build a new AWS client.
 func (b *ClientBuilder) Build() (Client, error) {
 	// Check parameters:
-	if b.logger == nil && b.capaLogger == nil {
+	if b.logger == nil {
 		return nil, fmt.Errorf("logger is mandatory")
 	}
 
@@ -502,7 +495,7 @@ func (b *ClientBuilder) Build() (Client, error) {
 	// Create and populate the object:
 	c := &awsClient{
 		cfg:                 cfg,
-		logger:              NewLoggerWrapper(b.logger, b.capaLogger),
+		logger:              NewLoggerWrapper(b.logger),
 		iamClient:           iam.NewFromConfig(cfg),
 		ec2Client:           ec2.NewFromConfig(cfg),
 		orgClient:           organizations.NewFromConfig(cfg),

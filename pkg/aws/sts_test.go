@@ -31,7 +31,7 @@ var _ = Describe("STS", func() {
 		mockSTSApi = mocks.NewMockStsApiClient(mockCtrl)
 		client = New(
 			awsSdk.Config{},
-			NewLoggerWrapper(logrus.New(), nil),
+			NewLoggerWrapper(logrus.New()),
 			mockIamAPI,
 			mocks.NewMockEc2ApiClient(mockCtrl),
 			mocks.NewMockOrganizationsApiClient(mockCtrl),

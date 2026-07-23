@@ -21,7 +21,6 @@ import (
 	"os"
 
 	cmv1 "github.com/openshift-online/ocm-sdk-go/clustersmgmt/v1"
-	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 
 	"github.com/openshift/rosa/pkg/input"
@@ -230,8 +229,8 @@ func runWithRuntime(r *rosa.Runtime, cmd *cobra.Command, argv []string) error {
 	r.Reporter.Debugf("Scheduling the upgrade policy")
 	_, err = r.OCMClient.ScheduleNodePoolUpgrade(cluster.ID(), machinePoolID, upgradePolicy)
 	if err != nil {
-		return errors.Wrapf(err, "Failed to schedule upgrade for machine pool '%s' in cluster '%s'",
-			machinePoolID, clusterKey)
+		return fmt.Errorf("Failed to schedule upgrade for machine pool '%s' in cluster '%s': %w",
+			machinePoolID, clusterKey, err)
 	}
 
 	r.Reporter.Infof("Upgrade successfully scheduled for the machine pool '%s' on cluster '%s'", machinePoolID,
@@ -272,8 +271,8 @@ func buildManualUpgradePolicy(r *rosa.Runtime, cmd *cobra.Command, currentUpgrad
 	var upgradePolicy *cmv1.NodePoolUpgradePolicy
 	upgradePolicy, err = r.OCMClient.BuildNodeUpgradePolicy(version, nodePool.ID(), currentUpgradeScheduling)
 	if err != nil {
-		return nil, errors.Wrapf(err, "Failed to build manual schedule upgrade for machine pool '%s' in cluster '%s'",
-			nodePool.ID(), clusterKey)
+		return nil, fmt.Errorf("Failed to build manual schedule upgrade for machine pool '%s' in cluster '%s': %w",
+			nodePool.ID(), clusterKey, err)
 	}
 
 	// Ask for confirmation
@@ -301,8 +300,8 @@ func buildAutomaticUpgradePolicy(r *rosa.Runtime, cmd *cobra.Command, currentUpg
 
 	upgradePolicy, err = r.OCMClient.BuildNodeUpgradePolicy("", nodePool.ID(), currentUpgradeScheduling)
 	if err != nil {
-		return nil, errors.Wrapf(err, "Failed to build automatic schedule upgrade for machine pool %s in cluster '%s'",
-			nodePool.ID(), clusterKey)
+		return nil, fmt.Errorf("Failed to build automatic schedule upgrade for machine pool %s in cluster '%s': %w",
+			nodePool.ID(), clusterKey, err)
 	}
 
 	// Ask for confirmation

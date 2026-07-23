@@ -33,7 +33,7 @@ import (
 
 	"github.com/sirupsen/logrus"
 
-	ordered "gitlab.com/c0b/go-ordered-json"
+	"github.com/openshift/rosa/internal/ordered"
 )
 
 // RoundTripperBuilder contains the information an logic needed to build a new round tripper that

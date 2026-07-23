@@ -17,88 +17,42 @@ limitations under the License.
 package aws
 
 import (
-	"fmt"
-
-	"github.com/go-logr/logr"
 	"github.com/sirupsen/logrus"
 )
 
 type LoggerWrapper struct {
-	loggerType   string
 	logrusLogger *logrus.Logger
-	capaLogger   *logr.Logger
 }
 
-func NewLoggerWrapper(logrusLog *logrus.Logger, capaLogger *logr.Logger) *LoggerWrapper {
-	if logrusLog != nil {
-		return &LoggerWrapper{
-			loggerType:   "logrus",
-			logrusLogger: logrusLog,
-		}
+func NewLoggerWrapper(logrusLog *logrus.Logger) *LoggerWrapper {
+	if logrusLog == nil {
+		return nil
 	}
-
-	if capaLogger != nil {
-		return &LoggerWrapper{
-			loggerType: "capa",
-			capaLogger: capaLogger,
-		}
+	return &LoggerWrapper{
+		logrusLogger: logrusLog,
 	}
-
-	return nil
 }
 
-func (lw *LoggerWrapper) GetLevel() (lvl int) {
-	switch lw.loggerType {
-	case "logrus":
-		lvl = int(lw.logrusLogger.GetLevel())
-	case "capa":
-		lvl = lw.capaLogger.GetV()
-	}
-
-	return lvl
+func (lw *LoggerWrapper) GetLevel() int {
+	return int(lw.logrusLogger.GetLevel())
 }
 
 func (lw *LoggerWrapper) Debug(args ...interface{}) {
-	switch lw.loggerType {
-	case "logrus":
-		lw.logrusLogger.Debug(args...)
-	case "capa":
-		lw.capaLogger.Info(args[0].(string))
-	}
+	lw.logrusLogger.Debug(args...)
 }
 
 func (lw *LoggerWrapper) Info(args ...interface{}) {
-	switch lw.loggerType {
-	case "logrus":
-		lw.logrusLogger.Info(args...)
-	case "capa":
-		lw.capaLogger.Info(args[0].(string))
-	}
+	lw.logrusLogger.Info(args...)
 }
 
 func (lw *LoggerWrapper) Warn(args ...interface{}) {
-	switch lw.loggerType {
-	case "logrus":
-		lw.logrusLogger.Warn(args...)
-	case "capa":
-		lw.capaLogger.Info(args[0].(string))
-	}
+	lw.logrusLogger.Warn(args...)
 }
 
 func (lw *LoggerWrapper) Error(args ...interface{}) {
-	switch lw.loggerType {
-	case "logrus":
-		lw.logrusLogger.Error(args...)
-	case "capa":
-		lw.capaLogger.Error(fmt.Errorf("awsClient error"), args[0].(string))
-	}
+	lw.logrusLogger.Error(args...)
 }
 
 func (lw *LoggerWrapper) Fatal(args ...interface{}) {
-	switch lw.loggerType {
-	case "logrus":
-		lw.logrusLogger.Fatal(args...)
-	case "capa":
-		lw.capaLogger.Error(fmt.Errorf("awsClient error"), args[0].(string))
-	}
+	lw.logrusLogger.Fatal(args...)
 }

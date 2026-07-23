@@ -3,14 +3,13 @@ package helper
 import (
 	"fmt"
 	"io"
+	"math"
 	"net"
 	"net/http"
 	"os"
 	"path/filepath"
 	"runtime"
 	"strings"
-
-	humanize "github.com/dustin/go-humanize"
 )
 
 // download will download a url to a local file. It's efficient because it will
@@ -152,7 +151,23 @@ func (wc WriteCounter) PrintProgress() {
 	// the remaining characters by filling it with spaces
 	fmt.Printf("\r%s", strings.Repeat(" ", 35))
 
-	// Return again and print current status of download
-	// We use the humanize package to print the bytes in a meaningful way (e.g. 10 MB)
-	fmt.Printf("\rDownloading... %s complete", humanize.Bytes(wc.Total))
+	fmt.Printf("\rDownloading... %s complete", readableBytes(wc.Total))
+}
+
+func readableBytes(b uint64) string {
+	const unit = 1000
+	if b < unit {
+		return fmt.Sprintf("%d B", b)
+	}
+	div, exp := uint64(unit), 0
+	for n := b / unit; n >= unit; n /= unit {
+		div *= unit
+		exp++
+	}
+	val := float64(b) / float64(div)
+	suffix := []string{"kB", "MB", "GB", "TB", "PB", "EB"}[exp]
+	if math.Round(val*10)/10 < 10 {
+		return fmt.Sprintf("%.1f %s", val, suffix)
+	}
+	return fmt.Sprintf("%.0f %s", val, suffix)
 }

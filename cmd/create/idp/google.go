@@ -19,8 +19,10 @@ package idp
 import (
 	"errors"
 	"fmt"
+	"strings"
 
-	"github.com/dchest/validator"
+	"k8s.io/apimachinery/pkg/util/validation"
+
 	cmv1 "github.com/openshift-online/ocm-sdk-go/clustersmgmt/v1"
 	"github.com/spf13/cobra"
 
@@ -133,8 +135,8 @@ func buildGoogleIdp(cmd *cobra.Command,
 }
 
 func validateGoogleHostedDomain(val interface{}) error {
-	hostedDomain := fmt.Sprintf("%v", val)
-	isValidHostedDomain := validator.IsValidDomain(hostedDomain)
+	hostedDomain := strings.ToLower(fmt.Sprintf("%v", val))
+	isValidHostedDomain := len(validation.IsDNS1123Subdomain(hostedDomain)) == 0
 	if !isValidHostedDomain {
 		return errors.New("Hosted Domain is not valid")
 	}
