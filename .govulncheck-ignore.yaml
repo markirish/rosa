@@ -9,4 +9,7 @@
 # - module: The exact module path where the vulnerability exists
 # - reason: Why this vulnerability is accepted
 
-ignored_vulnerabilities: []
+ignored_vulnerabilities:
+  - id: GO-2026-5932
+    module: golang.org/x/crypto
+    reason: "Binary-mode false positive: advisory only affects golang.org/x/crypto/openpgp, which nothing in this build imports (source scan is clean). govulncheck's binary mode can't attribute the match to a specific sub-package and flags the whole module because bcrypt/ssh from x/crypto are linked in transitively via ocm-common. See golang/go#80347."
